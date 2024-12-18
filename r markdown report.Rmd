@@ -1,0 +1,65 @@
+---
+title: "Report of PSID1982 Data Set"
+author:"Burak Bagatur"
+output: html_document
+date: "2024-12-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This report includes the analyzes and results performed on the data set.
+
+
+ Data Set:PSID1982 
+WAGE: Wage  paid for an hour (USD), Class: Float
+EXPERIENCE: Work experience Class: Intiger
+weeks:Weeks worked in a year. 
+Occupation: Departments in the business department , Class:Character
+Ethnictiry : Race/ethnicity of the individual
+Industry: Industry type
+sOUTH: Region: Southern USA
+SMSA: Standard Metropolitan Statistical Area (Urban vs. Rural)
+Union: Union membership , Class: Factor
+Gender: whether male or female, Class:Character
+Married: Marital status, Class: Factor
+EDUCATION: Years of education completed.
+
+
+
+```{r PSID1982}
+df<- PSID1982
+str(df)
+summary(df )
+```
+
+## Including Plots
+
+Histogram of Wage and experience
+boxplot of wage~gender 
+
+```{r pressure, echo=FALSE}
+hist(df$wage , main ="Wage Histogram ", xlab="Wage",col="yellow")
+hist(df$experience, main ="Experience Histogram",xlab="Experience",col="brown")
+boxplot(wage ~ gender, data=df,main="Boxplot of wage and gender",xlab="gender",ylab="wage ",col=c("white","grey"))
+
+```
+
+#Regresion Analysis 
+
+```{r setup, include=FALSE}
+##Regresion Analysis result 
+###The factors affecting wages are examined with the regression model below.
+reg_model1 <- lm(wage~experience+education+gender+union, data=df )
+summary(reg_model1)
+###The factors affecting education  is  examined with the regression model below.
+glm_model1 <- glm(education ~experience, data=df,family=gaussian("identity"))
+summary(glm_model1)
+
+df$union <- ifelse(df$union =="yes",1,0)
+glm_model3 <- glm(union ~wage ,data=df, family=binomial(link="logit"))
+summary(glm_model3)
+
+glm_model_poisson <- glm(experience ~  married + education+wage  , data = df, family = poisson(link="log"))
+summary(glm_model_poisson)
+```
